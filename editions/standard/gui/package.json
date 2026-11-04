@@ -1,6 +1,6 @@
 {
   "name": "diskmosaic",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "DiskMosaic offline disk usage analyzer",
   "main": "electron/main.cjs",
   "author": "davoda1",

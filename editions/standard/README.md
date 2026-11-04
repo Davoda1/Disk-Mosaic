@@ -1,8 +1,8 @@
-# DiskMosaic 1.0.0
+# DiskMosaic 1.0.1
 
 DiskMosaic provides the full disk-analysis workspace with extended history, filtering and reporting for Windows 10/11 x64 and Linux amd64. It runs locally and offline, with a Rust filesystem engine and sandboxed Electron interface.
 
-[Download 1.0.0](https://github.com/Davoda1/Disk-Mosaic/releases/tag/v1.0.0) · [User guide](https://github.com/Davoda1/Disk-Mosaic/blob/master/docs/USER-GUIDE.md) · [Compare editions](https://github.com/Davoda1/Disk-Mosaic#compare-editions)
+[Download 1.0.1](https://github.com/Davoda1/Disk-Mosaic/releases/tag/v1.0.1) · [User guide](https://github.com/Davoda1/Disk-Mosaic/blob/master/docs/USER-GUIDE.md) · [Compare editions](https://github.com/Davoda1/Disk-Mosaic#compare-editions)
 
 ## Features
 

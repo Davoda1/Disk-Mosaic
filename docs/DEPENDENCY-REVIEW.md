@@ -2,7 +2,7 @@
 
 ## Reviewed toolchain and runtime
 
-DiskMosaic 1.0.0 uses the same pinned desktop runtime and packaging dependencies in both editions. Each edition commits its own `gui/package-lock.json` and `engine/Cargo.lock`.
+DiskMosaic 1.0.1 uses the same pinned desktop runtime and packaging dependencies in both editions. Each edition commits its own `gui/package-lock.json` and `engine/Cargo.lock`.
 
 | Component | Version | Purpose |
 | --- | --- | --- |

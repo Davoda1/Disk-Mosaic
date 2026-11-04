@@ -13,4 +13,4 @@ if ($Latest) {
     & $packageScript
 }
 
-Write-Host 'DiskMosaic 1.0.0 all-in-one build + package PASS. Nothing was launched.'
+Write-Host 'DiskMosaic 1.0.1 all-in-one build + package PASS. Nothing was launched.'

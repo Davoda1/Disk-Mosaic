@@ -29,12 +29,12 @@ function polygonInside(points, rect, eps = 1e-9) {
 test('identity, IPC and history schema are internally aligned', () => {
   const cargo = fs.readFileSync(path.join(root, 'engine', 'Cargo.toml'), 'utf8');
   const pkg = JSON.parse(fs.readFileSync(path.join(root, 'gui', 'package.json'), 'utf8'));
-  assert.match(cargo, /^version = "1\.0\.0"$/m);
-  assert.equal(pkg.version, '1.0.0');
+  assert.match(cargo, /^version = "1\.0\.1"$/m);
+  assert.equal(pkg.version, '1.0.1');
   assert.match(engine, /"engine_protocol":5/);
   assert.match(engine, /"protocol":5/);
   assert.match(history, /pub const SCHEMA_VERSION: i64 = 4/);
-  assert.match(html, /Version 1\.0\.0/);
+  assert.match(html, /Version 1\.0\.1/);
 });
 
 test('History Explorer is bounded, aggregated and reuses comparison', () => {

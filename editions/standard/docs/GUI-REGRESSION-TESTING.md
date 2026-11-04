@@ -1,4 +1,4 @@
-# GUI regression testing — DiskMosaic 1.0.0
+# GUI regression testing — DiskMosaic 1.0.1
 
 The normal build and source validators run the dependency-free Node test suite.
 The additional `gui/tests/layout-runtime.cjs` suite runs the actual renderer HTML,

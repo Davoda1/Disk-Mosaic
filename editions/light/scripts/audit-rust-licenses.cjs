@@ -39,6 +39,14 @@ function licenseIds(expression) {
     .filter(v => !operators.has(v));
 }
 
+function markdownCell(value) {
+  // Keep each dependency on one row. Character references preserve literal metadata
+  // without introducing Markdown escapes, table delimiters, or inline HTML/formatting.
+  return String(value)
+    .replace(/\r\n|[\r\n\u2028\u2029]/g, ' ')
+    .replace(/[\\|&<>`*_[\]~]/g, character => `&#${character.codePointAt(0)};`);
+}
+
 const packages = [...metadata.packages].sort((a, b) =>
   a.name.localeCompare(b.name) || a.version.localeCompare(b.version));
 const failures = [];
@@ -77,8 +85,8 @@ const lines = [
 ];
 for (const pkg of packages) {
   if (pkg.name === 'diskmosaic-engine' && !pkg.source) continue;
-  const source = pkg.source || 'local';
-  lines.push(`| ${pkg.name.replace(/\|/g, '\\|')} | ${pkg.version} | ${(pkg.license || '').replace(/\|/g, '\\|')} | ${source.replace(/\|/g, '\\|')} |`);
+  const cells = [pkg.name, pkg.version, pkg.license || '', pkg.source || 'local'];
+  lines.push(`| ${cells.map(markdownCell).join(' | ')} |`);
 }
 lines.push('', `Audited packages: **${packages.filter(p => !(p.name === 'diskmosaic-engine' && !p.source)).length}**.`, '');
 fs.mkdirSync(path.dirname(reportPath), { recursive: true });
@@ -108,7 +116,7 @@ for (const pkg of packages) {
   }
 }
 fs.writeFileSync(licensesPath,
-  `DiskMosaic 1.0.0 — Rust dependency license texts\nGenerated: ${generated}\n\n${out.join('\n')}\n`,
+  `DiskMosaic 1.0.1 — Rust dependency license texts\nGenerated: ${generated}\n\n${out.join('\n')}\n`,
   'utf8');
 
 console.log(`Rust dependency license audit PASS: ${packages.length - 1} resolved third-party packages.`);

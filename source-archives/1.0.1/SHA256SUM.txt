@@ -1,0 +1,2 @@
+04c1806029cbb267b61f11ae18551c2511b7c3f6612db4bfa0e5c6ada91c40a8  DiskMosaic-1.0.1-Source.tar.xz
+e8c8bc53c3cb8e11c1a9cafe51aa3d3642711178fd06a16bd18ce2c3272b6e22  DiskMosaic-Light-1.0.1-Source.tar.xz

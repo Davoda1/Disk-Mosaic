@@ -28,22 +28,22 @@ function polygonInside(points, rect, eps = 1e-9) {
   return points.every(([x, y]) => x >= rect.x - eps && x <= rect.x + rect.w + eps && y >= rect.y - eps && y <= rect.y + rect.h + eps);
 }
 
-test('Light 1.0.0 keeps the stable protocol and history schema', () => {
+test('Light 1.0.1 keeps the stable protocol and history schema', () => {
   const cargo = fs.readFileSync(path.join(root, 'engine', 'Cargo.toml'), 'utf8');
   const pkg = JSON.parse(fs.readFileSync(path.join(root, 'gui', 'package.json'), 'utf8'));
-  assert.match(cargo, /^version = "1\.0\.0"$/m);
-  assert.equal(pkg.version, '1.0.0');
+  assert.match(cargo, /^version = "1\.0\.1"$/m);
+  assert.equal(pkg.version, '1.0.1');
   assert.match(engine, /"protocol":4,"version":env!\("CARGO_PKG_VERSION"\)/);
   assert.match(history, /const SCHEMA_VERSION: i64 = 2/);
-  assert.match(html, /Version 1\.0\.0/);
+  assert.match(html, /Version 1\.0\.1/);
 });
 
-test('report/About identity is 1.0.0 throughout the renderer', () => {
-  assert.match(html, /Version 1\.0\.0/);
-  assert.match(app, /application: \{ name: 'DiskMosaic Light', version: '1\.0\.0'/);
+test('report/About identity is 1.0.1 throughout the renderer', () => {
+  assert.match(html, /Version 1\.0\.1/);
+  assert.match(app, /application: \{ name: 'DiskMosaic Light', version: '1\.0\.1'/);
   assert.match(html, /<title>DiskMosaic Light<\/title>/);
-  const versionTranslations = (i18n.match(/'Version 1\.0\.0'/g) || []).length;
-  assert.ok(versionTranslations >= 5, `expected translated Version 1.0.0 coverage, found ${versionTranslations}`);
+  const versionTranslations = (i18n.match(/'Version 1\.0\.1'/g) || []).length;
+  assert.ok(versionTranslations >= 5, `expected translated Version 1.0.1 coverage, found ${versionTranslations}`);
 });
 
 test('Light keeps the focused workspace set', () => {
@@ -210,7 +210,7 @@ test('3D renderer uses four shaded extrusion faces around an inset front', () =>
 test('visible display settings are translated in all six languages', () => {
   assert.match(i18n, /const DISPLAY_STRINGS/);
   for (const lang of ['de','hu','fr','it','es']) assert.match(i18n, new RegExp(`${lang}:\\s*\\{`));
-  for (const source of ['Hidden files and directories','Show All','Only Directories','Hide All','5 seconds','30 seconds','1 minute','Visualization','Cushioned 2D','Extruded 3D Blocks','Extrusion depth','Version 1.0.0']) {
+  for (const source of ['Hidden files and directories','Show All','Only Directories','Hide All','5 seconds','30 seconds','1 minute','Visualization','Cushioned 2D','Extruded 3D Blocks','Extrusion depth','Version 1.0.1']) {
     const occurrences = i18n.split(`'${source}'`).length - 1;
     assert.ok(occurrences >= 5, `${source} should have translations for every non-English language`);
   }

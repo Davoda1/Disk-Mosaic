@@ -82,7 +82,7 @@ def main() -> None:
 
         try:
             ready = wait("engine_ready")
-            assert ready["version"] == "1.0.0"
+            assert ready["version"] == "1.0.1"
             assert ready["protocol"] == (5 if args.edition == "standard" else 4)
             assert process.stdin is not None
             process.stdin.write("{malformed\n")

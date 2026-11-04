@@ -58,7 +58,7 @@ test('packaging includes the staged Rust engine and Utility category', () => {
 });
 
 test('release artifact names and application version are stable', () => {
-  assert.equal(pkg.version, '1.0.0');
+  assert.equal(pkg.version, '1.0.1');
   assert.equal(pkg.devDependencies.electron, '45.2.2');
   assert.equal(pkg.devDependencies['@electron/packager'], '20.3.0');
   assert.equal(pkg.devDependencies['@electron/asar'], '4.3.1');
@@ -783,7 +783,7 @@ test('settings exposes About opposite Save and the About dialog carries project 
   assert.ok(footer.indexOf('id="aboutButton"') < footer.indexOf('id="saveSettingsButton"'), 'About should be on the opposite/left side of Save');
   assert.match(html, /id="aboutModal"/);
   assert.match(html, /About DiskMosaic Light/);
-  assert.match(html, /Version 1\.0\.0/);
+  assert.match(html, /Version 1\.0\.1/);
   assert.match(html, /GNU AGPL v3 only/);
   assert.match(html, /Copyright \(c\) 2026 davoda1/);
   assert.match(html, /Cross-platform disk usage analyzer and filesystem investigation tool/);

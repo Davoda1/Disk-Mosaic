@@ -2797,7 +2797,7 @@
       const report = {
         format: 'DiskMosaic scan report',
         format_version: 1,
-        application: { name: 'DiskMosaic Light', version: '1.0.0', homepage: 'https://github.com/Davoda1/Disk-Mosaic' },
+        application: { name: 'DiskMosaic Light', version: '1.0.1', homepage: 'https://github.com/Davoda1/Disk-Mosaic' },
         generated_at: new Date().toISOString(),
         root: state.rootNode,
         summary: state.summary,

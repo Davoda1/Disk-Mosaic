@@ -12,4 +12,4 @@ esac
 
 "$SCRIPT_DIR/build.sh" "${latest_arg[@]}"
 "$SCRIPT_DIR/package.sh" "${latest_arg[@]}"
-printf '%s\n' "DiskMosaic 1.0.0 all-in-one build + package PASS. Nothing was launched."
+printf '%s\n' "DiskMosaic 1.0.1 all-in-one build + package PASS. Nothing was launched."

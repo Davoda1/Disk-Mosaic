@@ -1,4 +1,4 @@
-# Third-party notices — DiskMosaic Light 1.0.0
+# Third-party notices — DiskMosaic Light 1.0.1
 
 DiskMosaic application code and original artwork are licensed under the
 AGPL-3.0-only license in [LICENSE](LICENSE). Third-party software retains its own license. This summary does

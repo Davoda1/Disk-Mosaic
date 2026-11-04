@@ -14,14 +14,14 @@ for (const edition of ['standard', 'light']) {
   const lock = JSON.parse(fs.readFileSync(path.join(base, 'gui/package-lock.json'), 'utf8'));
   const cargo = fs.readFileSync(path.join(base, 'engine/Cargo.toml'), 'utf8');
   const cargoLock = fs.readFileSync(path.join(base, 'engine/Cargo.lock'), 'utf8');
-  assert.equal(pkg.version, '1.0.0', `${edition}: application version`);
+  assert.equal(pkg.version, '1.0.1', `${edition}: application version`);
   assert.equal(pkg.license, 'AGPL-3.0-only', `${edition}: application license`);
   assert.equal(lock.packages[''].version, pkg.version, `${edition}: npm lock version`);
   assert.equal(lock.packages[''].name, pkg.name, `${edition}: npm lock identity`);
   assert.deepEqual(lock.packages[''].devDependencies, pkg.devDependencies, `${edition}: locked development dependencies`);
-  assert.match(cargo, /^version = "1\.0\.0"$/m, `${edition}: engine version`);
+  assert.match(cargo, /^version = "1\.0\.1"$/m, `${edition}: engine version`);
   assert.match(cargo, /^license = "AGPL-3\.0-only"$/m, `${edition}: engine license`);
-  assert.match(cargoLock, /name = "diskmosaic-engine"\nversion = "1\.0\.0"/, `${edition}: Cargo lock version`);
+  assert.match(cargoLock, /name = "diskmosaic-engine"\nversion = "1\.0\.1"/, `${edition}: Cargo lock version`);
   assert.equal(fs.readFileSync(path.join(base, 'LICENSE'), 'utf8'), fs.readFileSync(path.join(root, 'LICENSE'), 'utf8'), `${edition}: complete license`);
   for (const value of [pkg.name, pkg.build.appId, pkg.build.linux.executableName]) {
     const key = `${typeof value}:${value}`;

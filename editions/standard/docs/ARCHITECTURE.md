@@ -1,4 +1,4 @@
-# DiskMosaic 1.0.0 architecture
+# DiskMosaic 1.0.1 architecture
 
 ## Rust engine
 

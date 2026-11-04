@@ -4,20 +4,20 @@
 
 **Explore disk usage, find duplicates, and understand how storage changes over time.** DiskMosaic is an offline disk-usage analyzer for Windows and Linux. A native Rust engine powers interactive treemaps, searchable file tables, exact duplicate verification, and local scan history in a sandboxed desktop interface.
 
-[Download 1.0.0](https://github.com/Davoda1/Disk-Mosaic/releases/tag/v1.0.0) · [User guide](docs/USER-GUIDE.md) · [Build from source](docs/BUILDING.md) · [Security](SECURITY.md)
+[Download 1.0.1](https://github.com/Davoda1/Disk-Mosaic/releases/tag/v1.0.1) · [User guide](docs/USER-GUIDE.md) · [Build from source](docs/BUILDING.md) · [Security](SECURITY.md)
 
 ## Download
 
-Version **1.0.0** is available in two editions. **DiskMosaic** provides the full analysis workspace; **DiskMosaic Light** offers a compact interface with the core scanning, treemap, duplicate, and history tools. Both editions work locally without accounts or telemetry.
+Version **1.0.1** is available in two editions. **DiskMosaic** provides the full analysis workspace; **DiskMosaic Light** offers a compact interface with the core scanning, treemap, duplicate, and history tools. Both editions work locally without accounts or telemetry.
 
 | Platform or package | DiskMosaic | DiskMosaic Light |
 | --- | --- | --- |
-| Windows 10/11 · x64 | [Portable ZIP](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.0/DiskMosaic-1.0.0-Windows-x86_64.zip) | [Portable ZIP](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.0/DiskMosaic-Light-1.0.0-Windows-x86_64.zip) |
-| Linux · amd64 | [Portable TAR.GZ](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.0/DiskMosaic-1.0.0-Linux-x86_64.tar.gz) | [Portable TAR.GZ](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.0/DiskMosaic-Light-1.0.0-Linux-x86_64.tar.gz) |
-| Debian / Ubuntu · amd64 | [DEB package](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.0/DiskMosaic-1.0.0-Linux-x86_64.deb) | [DEB package](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.0/DiskMosaic-Light-1.0.0-Linux-x86_64.deb) |
-| Standalone source | [Source TAR.XZ](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.0/DiskMosaic-1.0.0-Source.tar.xz) | [Source TAR.XZ](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.0/DiskMosaic-Light-1.0.0-Source.tar.xz) |
+| Windows 10/11 · x64 | [Portable ZIP](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.1/DiskMosaic-1.0.1-Windows-x86_64.zip) | [Portable ZIP](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.1/DiskMosaic-Light-1.0.1-Windows-x86_64.zip) |
+| Linux · amd64 | [Portable TAR.GZ](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.1/DiskMosaic-1.0.1-Linux-x86_64.tar.gz) | [Portable TAR.GZ](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.1/DiskMosaic-Light-1.0.1-Linux-x86_64.tar.gz) |
+| Debian / Ubuntu · amd64 | [DEB package](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.1/DiskMosaic-1.0.1-Linux-x86_64.deb) | [DEB package](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.1/DiskMosaic-Light-1.0.1-Linux-x86_64.deb) |
+| Standalone source | [Source TAR.XZ](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.1/DiskMosaic-1.0.1-Source.tar.xz) | [Source TAR.XZ](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.1/DiskMosaic-Light-1.0.1-Source.tar.xz) |
 
-[Release notes](docs/RELEASE-1.0.0.md) · [SHA-256 checksums](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.0/SHA256SUM.txt) · [Repository source archives](source-archives/1.0.0)
+[Release notes](docs/RELEASE-1.0.1.md) · [SHA-256 checksums](https://github.com/Davoda1/Disk-Mosaic/releases/download/v1.0.1/SHA256SUM.txt) · [Repository source archives](source-archives/1.0.1)
 
 Extract the complete portable archive before launching the application. Binary packages include the desktop runtime and Rust engine; Node.js and Rust are only needed for development. Linux builds require a graphical session and Chromium sandbox support. On systems that restrict unprivileged user namespaces, use the Debian package to install the sandbox helper with its required permissions.
 
@@ -132,7 +132,7 @@ See [building, testing, and packaging](docs/BUILDING.md) for complete instructio
 | [docs](docs) | Shared user guide, build instructions, dependency review, and release notes |
 | [docs/images](docs/images) | Repository banner and application screenshots |
 | [scripts](scripts) | Repository validation, real-engine smoke checks, and source packaging |
-| [source-archives/1.0.0](source-archives/1.0.0) | Standalone source packages and their checksum manifest |
+| [source-archives/1.0.1](source-archives/1.0.1) | Standalone source packages and their checksum manifest |
 | [.github](.github) | Windows/Linux CI, contribution templates, and issue templates |
 
 The maintained branch is `master`. Changes to shared scanner or security behavior should be checked against both editions. See the [contribution guide](CONTRIBUTING.md).

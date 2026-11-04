@@ -94,7 +94,7 @@ test('binary path checker detects forbidden UTF-8 and UTF-16LE build prefixes', 
 
 test('release identity and exact dependency lock metadata agree', () => {
   const lock = JSON.parse(fs.readFileSync(path.join(root, 'gui/package-lock.json'), 'utf8'));
-  assert.equal(pkg.version, '1.0.0');
+  assert.equal(pkg.version, '1.0.1');
   assert.equal(pkg.license, 'AGPL-3.0-only');
   assert.equal(pkg.desktopName, `${pkg.name}.desktop`);
   assert.equal(pkg.build.linux.syncDesktopName, true);

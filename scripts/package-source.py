@@ -25,7 +25,7 @@ def main() -> None:
     products = []
     for edition, prefix in [("standard", "DiskMosaic"), ("light", "DiskMosaic-Light")]:
         source_prefix = f"editions/{edition}/"
-        archive_root = f"{prefix}-1.0.0-Source"
+        archive_root = f"{prefix}-1.0.1-Source"
         selected: dict[str, Path] = {}
         for name in tracked:
             if not name.startswith(source_prefix):

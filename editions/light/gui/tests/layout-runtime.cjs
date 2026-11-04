@@ -48,7 +48,7 @@ function installFixture() {
   const deliver = value => setTimeout(() => receive?.(value), 0);
   window.__fixtureCommands = [];
   window.diskMosaic = Object.freeze({
-    onEngineEvent(callback) { receive = callback; deliver({ event: 'engine_ready', protocol: 4, version: '1.0.0', history_available: true }); return () => {}; },
+    onEngineEvent(callback) { receive = callback; deliver({ event: 'engine_ready', protocol: 4, version: '1.0.1', history_available: true }); return () => {}; },
     setLanguage: async language => language,
     getStartupPath: async () => null,
     chooseFolder: async () => '/fixture',
@@ -123,7 +123,7 @@ async function run() {
     await check('Settings opens before a scan', settingsContainment);
     await page.locator('#aboutButton').click();
     assert.match(await page.locator('#aboutModal').innerText(), /DiskMosaic Light/);
-    assert.match(await page.locator('#aboutModal').innerText(), /Version 1\.0\.0/);
+    assert.match(await page.locator('#aboutModal').innerText(), /Version 1\.0\.1/);
     assert.match(await page.locator('#aboutModal').innerText(), /GNU AGPL/);
     await check('About is above Settings', () => {
       const bounds = document.querySelector('#aboutModal .dialog').getBoundingClientRect();

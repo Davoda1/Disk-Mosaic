@@ -1,6 +1,6 @@
 [package]
 name = "diskmosaic-engine"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 authors = ["davoda1"]
 description = "Filesystem scanning engine for DiskMosaic Light"
