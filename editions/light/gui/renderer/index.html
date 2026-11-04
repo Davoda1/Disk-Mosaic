@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>DiskMosaic Light</title>
+  <link rel="icon" href="assets/icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <header class="toolbar">
+      <div class="brand" title="DiskMosaic Light 1.0.0">
+        <img src="assets/icon.png" alt="" width="28" height="28">
+        <span>DiskMosaic Light</span>
+      </div>
+      <button id="scanButton" class="button primary">Scan…</button>
+      <button id="rescanButton" class="button" disabled>Rescan</button>
+      <button id="openSnapshotButton" class="button" title="Open a saved DiskMosaic scan">Open Scan…</button>
+      <button id="saveSnapshotButton" class="button" title="Save the completed scan for instant reopening and comparison" disabled>Save Scan…</button>
+      <button id="backButton" class="button icon-button" title="Back" disabled>←</button>
+      <button id="forwardButton" class="button icon-button" title="Forward" disabled>→</button>
+      <button id="parentButton" class="button icon-button" title="Parent" disabled>↑</button>
+      <div id="pathBar" class="path-bar breadcrumb-bar" title="No scan loaded">No scan loaded</div>
+      <span id="watchStatus" class="watch-status not-watching" title="Filesystem monitoring is off">Not watching</span>
+      <div class="basis-toggle" title="Choose which byte count drives treemap area and share bars">
+        <button id="logicalBasisButton" class="button compact active">Logical</button>
+        <button id="allocatedBasisButton" class="button compact">Allocated</button>
+      </div>
+      <button id="bookmarkButton" class="button icon-button" title="Bookmark current scan location" disabled>☆</button>
+      <button id="exportButton" class="button" title="Export an offline JSON scan report" disabled>Export…</button>
+      <button id="errorsButton" class="button" disabled>Errors <span id="errorBadge" class="badge">0</span></button>
+      <button id="settingsButton" class="button icon-button" title="Settings">⚙</button>
+    </header>
+
+    <section id="progressPanel" class="progress-panel hidden" aria-live="polite">
+      <div class="indeterminate"><span></span></div>
+      <div class="scan-activity" aria-hidden="true">
+        <div class="scan-orbit"><span class="scan-core"></span></div>
+        <div class="scan-pixels"><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="progress-main">
+        <strong id="progressPath">Scanning…</strong>
+        <div class="progress-metrics">
+          <span>Files <b id="progressFiles">0</b></span>
+          <span>Directories <b id="progressDirs">0</b></span>
+          <span>Logical <b id="progressBytes">0 B</b></span>
+          <span>Allocated <b id="progressAllocated">0 B</b></span>
+          <span>Elapsed <b id="progressElapsed">0:00</b></span>
+          <span>Errors <b id="progressErrors">0</b></span>
+          <span>Excluded <b id="progressExcluded">0</b></span>
+        </div>
+      </div>
+      <div class="progress-actions">
+        <button id="pauseButton" class="button">Pause</button>
+        <button id="cancelButton" class="button danger">Cancel Scan</button>
+      </div>
+    </section>
+
+    <section id="scanSummaryStrip" class="scan-summary-strip hidden" aria-label="Scan overview">
+      <div class="summary-chip source-summary"><span>Source</span><strong id="summarySource">Live scan</strong></div>
+      <div class="summary-chip"><span>Logical</span><strong id="summaryLogical">—</strong></div>
+      <div class="summary-chip"><span>Allocated</span><strong id="summaryAllocated">—</strong></div>
+      <div class="summary-chip"><span>Files</span><strong id="summaryFiles">—</strong></div>
+      <div class="summary-chip"><span>Directories</span><strong id="summaryDirs">—</strong></div>
+      <div class="summary-chip"><span>Filesystem free</span><strong id="summaryFree">—</strong></div>
+      <button id="selectionActionsButton" class="summary-chip selected-summary selection-actions-trigger" type="button" disabled><span>Selected</span><strong id="summarySelected">Nothing selected</strong></button>
+    </section>
+
+    <main id="workspace" class="workspace">
+      <section id="upperPane" class="upper-pane">
+        <section class="panel tree-panel">
+          <div class="panel-tabs" role="tablist">
+            <button class="tab active" data-view="directory" title="Directory tree (Ctrl+1)">Directory</button>
+            <button class="tab" data-view="largest" title="Largest files (Ctrl+2)">Largest Files</button>
+            <button class="tab" data-view="duplicates" title="Duplicate finder (Ctrl+3)">Duplicates</button>
+            <button class="tab" data-view="search" title="Search and filter (Ctrl+4)">Search</button>
+            <button class="tab" data-view="compare" title="Compare saved scans (Ctrl+5)">Compare</button>
+            <button class="tab" data-view="statistics" title="Statistics and insights (Ctrl+6)">Statistics</button>
+            <button class="tab" data-view="history" title="Persistent local scan history (Ctrl+7)">History</button>
+          </div>
+          <div id="viewContext" class="view-context" aria-live="polite">
+            <div><strong id="viewContextTitle">Directory</strong><span id="viewContextText">Browse the scanned hierarchy and compare each item's share of the complete scan.</span></div>
+            <span id="viewContextMeta" class="view-context-meta">Ctrl+1</span>
+          </div>
+
+          <div id="directoryView" class="view active">
+            <div class="table-header tree-grid">
+              <button data-sort="name">Name</button>
+              <button data-sort="size" class="sorted">Logical ↓</button>
+              <button data-sort="allocated">Allocated</button>
+              <span title="Each bar is the item's share of the full scan using the selected size basis">Share</span>
+              <button data-sort="files">Files</button>
+              <button data-sort="directories">Dirs</button>
+              <button data-sort="modified">Modified</button>
+            </div>
+            <div id="treeList" class="virtual-list" tabindex="0"></div>
+          </div>
+
+          <div id="largestView" class="view">
+            <div class="sub-toolbar">
+              <label>Show
+                <select id="largestLimit">
+                  <option value="100">Top 100</option>
+                  <option value="500">Top 500</option>
+                  <option value="1000">Top 1000</option>
+                </select>
+              </label>
+            </div>
+            <div class="table-header largest-grid">
+              <button data-largest-sort="name">Filename</button>
+              <button data-largest-sort="path">Complete path</button>
+              <button id="largestSizeHeader" data-largest-sort="size" class="sorted">Logical ↓</button>
+              <button data-largest-sort="extension">Type</button>
+              <button data-largest-sort="directory">Containing directory</button>
+            </div>
+            <div id="largestList" class="virtual-list"></div>
+          </div>
+
+          <div id="duplicatesView" class="view duplicates-view">
+            <div class="sub-toolbar analysis-toolbar">
+              <label>Minimum file size <input id="duplicateMinSize" value="1 MiB" autocomplete="off"></label>
+              <button id="duplicateAnalyzeButton" class="button primary">Find Duplicates</button>
+              <button id="duplicateCancelButton" class="button hidden">Cancel</button>
+              <span id="duplicateProgress" class="muted">Size groups → sampled fingerprint → exact byte comparison</span>
+            </div>
+            <div id="duplicateSummary" class="analysis-summary"></div>
+            <div class="table-header duplicate-grid">
+              <span>Group / file</span><span>Copies</span><span>File size</span><span>Recoverable</span><span>Allocated</span>
+            </div>
+            <div id="duplicateList" class="virtual-list"></div>
+          </div>
+
+          <div id="searchView" class="view">
+            <form id="searchForm" class="search-form advanced-search">
+              <input id="searchName" placeholder="Filename contains…" autocomplete="off">
+              <input id="searchPath" placeholder="Path contains…" autocomplete="off">
+              <input id="searchExtension" placeholder="Extension, e.g. .iso" autocomplete="off">
+              <select id="searchKind" title="Entry type"><option value="">Any type</option><option value="file">Files</option><option value="directory">Directories</option><option value="symlink">Symlinks</option><option value="other">Other</option></select>
+              <input id="searchMinSize" placeholder="Minimum size, e.g. 1 GiB" autocomplete="off">
+              <input id="searchMaxSize" placeholder="Maximum size, e.g. 10 GiB" autocomplete="off">
+              <span id="searchBasisHint" class="basis-hint">Size filters use Logical size</span>
+              <label class="date-filter">Modified after <input id="searchModifiedAfter" type="date"></label>
+              <label class="date-filter">Modified before <input id="searchModifiedBefore" type="date"></label>
+              <button class="button primary" type="submit">Search</button>
+            </form>
+            <div class="table-header search-grid">
+              <span>Name</span><span>Path</span><span>Size</span><span>Type</span>
+            </div>
+            <div id="searchList" class="virtual-list"></div>
+          </div>
+
+          <div id="compareView" class="view compare-view">
+            <div class="sub-toolbar analysis-toolbar">
+              <button id="compareSnapshotButton" class="button primary">Compare with Saved Scan…</button>
+              <span id="comparePath" class="muted">Choose a .dmscan snapshot of the same scan root.</span>
+            </div>
+            <div id="compareSummary" class="analysis-summary"></div>
+            <div class="table-header compare-grid">
+              <span>Path</span><span>Status</span><span>Before</span><span>Now</span><span>Change</span>
+            </div>
+            <div id="compareList" class="virtual-list"></div>
+          </div>
+
+          <div id="historyView" class="view history-view">
+            <div class="sub-toolbar analysis-toolbar">
+              <button id="historyStoreButton" class="button primary" disabled>Store Current Scan</button>
+              <button id="historyRefreshButton" class="button">Refresh History</button>
+              <span id="historyStatusText" class="muted">SQLite history is local and optional.</span>
+            </div>
+            <div class="table-header history-grid"><span>Root</span><span>Saved</span><span>Logical</span><span>Allocated</span><span>Files</span><span>Actions</span></div>
+            <div id="historyList" class="history-list"></div>
+          </div>
+
+          <div id="statisticsView" class="view statistics-view">
+            <div id="statisticsCards" class="statistics-cards"></div>
+            <section class="stats-card insights-card">
+              <div class="stats-card-title"><strong>Storage insights</strong><span>Local deterministic observations from this scan</span></div>
+              <div id="storageInsights" class="storage-insights"></div>
+            </section>
+            <div class="statistics-charts">
+              <section class="stats-card"><div class="stats-card-title"><strong>File size distribution</strong><span>Logical/apparent bytes by file size bucket</span></div><div id="sizeDistribution" class="distribution-chart"></div></section>
+              <section class="stats-card"><div class="stats-card-title"><strong>File age distribution</strong><span>Space by last-modified age</span></div><div id="ageDistribution" class="distribution-chart"></div></section>
+            </div>
+          </div>
+        </section>
+
+        <div id="verticalSplitter" class="splitter vertical" role="separator" aria-orientation="vertical"></div>
+
+        <aside class="panel extension-panel">
+          <div class="panel-heading type-heading">
+            <div>
+              <strong id="typeStatsTitle">Extension statistics</strong>
+              <span id="extensionHint">Click a type to highlight it · Ctrl+Click to multi-select</span>
+            </div>
+            <div class="type-mode">
+              <button id="showExtensionsButton" class="button compact active">Extensions</button>
+              <button id="showCategoriesButton" class="button compact">Categories</button>
+              <button id="clearExtensionFilter" class="button compact hidden" title="Clear all extension/category highlights" aria-label="Clear all extension or category highlights">Clear</button>
+            </div>
+          </div>
+          <div class="table-header extension-grid">
+            <button id="typeHeaderLabel" data-ext-sort="extension">Extension</button>
+            <button data-ext-sort="files">Files</button>
+            <button id="typeSizeHeader" data-ext-sort="size" class="sorted">Logical ↓</button>
+            <span>%</span>
+          </div>
+          <div id="extensionList" class="virtual-list extension-list"></div>
+          <div id="detailsPanel" class="details-panel">
+            <div class="details-title">Selection details</div>
+            <div class="selection-card">
+              <div id="detailGlyph" class="selection-glyph" aria-hidden="true">◇</div>
+              <div class="selection-card-main">
+                <strong id="detailName">Nothing selected</strong>
+                <span id="detailCategory">Select a file or directory in any synchronized view.</span>
+                <div class="selection-share-track" title="Selected item's share of the complete scan"><span id="detailShareBar"></span></div>
+              </div>
+            </div>
+            <dl>
+              <dt>Path</dt><dd id="detailPath">—</dd>
+              <dt>Logical size</dt><dd id="detailSize">—</dd>
+              <dt>Allocated size</dt><dd id="detailAllocated">—</dd>
+              <dt>Hard links</dt><dd id="detailLinks">—</dd>
+              <dt>Share of scan</dt><dd id="detailShare">—</dd>
+              <dt>Type</dt><dd id="detailType">—</dd>
+              <dt>Extension</dt><dd id="detailExtension">—</dd>
+              <dt>Modified</dt><dd id="detailModified">—</dd>
+              <dt>Children</dt><dd id="detailChildren">—</dd>
+              <dt>Created</dt><dd id="detailCreated">—</dd>
+              <dt>Accessed</dt><dd id="detailAccessed">—</dd>
+              <dt>Identity</dt><dd id="detailIdentity">—</dd>
+              <dt>Permissions</dt><dd id="detailPermissions">—</dd>
+              <dt>Owner</dt><dd id="detailOwner">—</dd>
+              <dt>Symlink target</dt><dd id="detailSymlinkTarget">—</dd>
+            </dl>
+          </div>
+        </aside>
+      </section>
+
+      <div id="horizontalSplitter" class="splitter horizontal" role="separator" aria-orientation="horizontal"></div>
+
+      <section class="panel treemap-panel">
+        <div class="panel-heading treemap-heading">
+          <div class="treemap-title">
+            <strong>Treemap</strong>
+            <span id="treemapScope">No scan loaded</span>
+          </div>
+          <div class="treemap-tools">
+            <span id="treemapCount" class="muted"></span>
+            <button id="treemapRootButton" class="button compact" disabled title="Return to the scan root (Ctrl+0)">Root</button>
+            <button id="treemapFocusButton" class="button compact" disabled title="Focus the selected directory or containing directory (Ctrl++)">Focus selected</button>
+            <button id="treemapModeButton" class="button compact" title="Switch between current-size and comparison-delta treemap" disabled>Current</button>
+            <button id="treemapExpandButton" class="button compact" title="Maximize treemap">Maximize</button>
+          </div>
+        </div>
+        <div id="treemapWrap" class="treemap-wrap">
+          <canvas id="treemapCanvas" tabindex="0" aria-label="Interactive disk usage treemap"></canvas>
+          <div id="treemapHoverFrame" class="treemap-hover-frame hidden" aria-hidden="true"></div>
+          <div id="treemapEmpty" class="empty-state">Scan a drive or folder to visualize disk usage.</div>
+          <div id="treemapScanOverlay" class="treemap-scan-overlay hidden" aria-hidden="true">
+            <div class="scan-visual">
+              <div class="scan-orbit large"><span class="scan-core"></span></div>
+              <div class="scan-pixels large"><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+            <strong>Scanning filesystem…</strong>
+            <span id="treemapScanPath">Preparing scan</span>
+            <small id="treemapScanStats">0 files · 0 B analyzed</small>
+          </div>
+          <div id="treemapTooltip" class="tooltip hidden"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="statusbar">
+      <span id="statusText">Engine starting…</span>
+      <span id="statusSummary"></span>
+    </footer>
+  </div>
+
+  <div id="startOverlay" class="overlay">
+    <div class="dialog start-dialog">
+      <div class="dialog-icon"><img src="assets/icon.png" alt="" width="56" height="56"></div>
+      <h1>DiskMosaic Light</h1>
+      <p>Choose a filesystem or folder to analyze. Scanning stays entirely on this computer.</p>
+      <div class="saved-location-groups">
+        <section><h3>Bookmarks</h3><div id="bookmarkChoices" class="saved-choices"><span class="muted">No bookmarks yet.</span></div></section>
+        <section><h3>Recent scans</h3><div id="recentChoices" class="saved-choices"><span class="muted">No recent scans yet.</span></div></section>
+      </div>
+      <h3 class="root-heading">Filesystems</h3>
+      <div id="rootChoices" class="root-choices"><div class="loading">Detecting filesystems…</div></div>
+      <div class="start-actions">
+        <button id="overlayFolderButton" class="button primary wide">Select Folder…</button>
+        <button id="overlaySnapshotButton" class="button wide">Open Saved Scan…</button>
+      </div>
+      <button id="overlaySettingsButton" class="button icon-button start-settings-button" title="Settings" aria-label="Settings">⚙</button>
+      <div class="privacy-note">No telemetry · No accounts · No network access during normal use</div>
+    </div>
+  </div>
+
+  <div id="settingsModal" class="overlay hidden">
+    <div class="dialog settings-dialog">
+      <div class="dialog-header"><h2>Settings</h2><button class="button icon-button modal-close" data-close="settingsModal">×</button></div>
+      <div class="settings-grid">
+        <div class="settings-column">
+          <fieldset>
+          <legend>General</legend>
+          <label><span>Language</span>
+            <select id="settingLanguage">
+              <option value="en">English</option><option value="de">Deutsch</option><option value="hu">Magyar</option><option value="fr">Français</option><option value="it">Italiano</option><option value="es">Español</option>
+            </select>
+          </label>
+          <label>Theme
+            <select id="settingTheme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select>
+          </label>
+          <label>Size units
+            <select id="settingUnits"><option value="iec">IEC (KiB, MiB, GiB)</option><option value="si">SI (kB, MB, GB)</option></select>
+          </label>
+          <label>Default size basis
+            <select id="settingSizeBasis"><option value="logical">Logical / apparent size</option><option value="allocated">Allocated / on-disk size</option></select>
+          </label>
+          <label>Hidden files and directories
+            <select id="settingHiddenDisplayMode"><option value="show_all">Show All</option><option value="directories_only">Only Directories</option><option value="hide_all">Hide All</option></select>
+            <small>Hidden entries are always scanned and counted. This setting controls browsing/display only. Windows uses the Hidden attribute; Linux/Unix uses dot-prefixed names.</small>
+          </label>
+          <label class="check"><input id="settingConfirmTrash" type="checkbox"> Confirm before moving items to Trash</label>
+          </fieldset>
+          <fieldset>
+          <legend>Scanning</legend>
+          <label>Worker count <input id="settingWorkers" type="number" min="0" max="64" step="1"><small>0 = Auto</small></label>
+          <label class="check"><input id="settingFollowSymlinks" type="checkbox"> Follow symbolic links</label>
+          <label class="check"><input id="settingCrossFilesystems" type="checkbox"> Cross filesystem/mount boundaries</label>
+          <label class="check"><input id="settingHardlinks" type="checkbox"> Count hard-linked physical files once</label>
+          <label class="check"><input id="settingWatchFilesystem" type="checkbox"> Monitor filesystem changes after scan</label>
+          <label>Event debounce <select id="settingWatchDebounce"><option value="500">Auto/default (500 ms)</option><option value="250">250 ms</option><option value="1000">1 second</option><option value="2000">2 seconds</option><option value="5000">5 seconds</option><option value="30000">30 seconds</option><option value="60000">1 minute</option></select><small>Wait this long to combine bursts of filesystem events before refreshing affected directories. This does not periodically rescan the filesystem.</small></label>
+          <label>Duplicate analysis minimum size <input id="settingDuplicateMinSize" value="1 MiB"><small>Only equal-size candidate files at or above this threshold are fingerprinted.</small></label>
+          <label>Exclude patterns<textarea id="settingExcludePatterns" rows="5" placeholder="node_modules&#10;*.tmp&#10;path:cache/*&#10;name:.git"></textarea><small>One case-insensitive glob per line. Unprefixed or <b>name:</b> rules match a basename; <b>path:</b> rules match the scan-relative path. Supports * and ?.</small></label>
+          </fieldset>
+          <fieldset>
+          <legend>File categories</legend>
+          <label>Custom category/color rules
+            <textarea id="settingCategoryRules" rows="7" placeholder="Video | #4b63d8 | .mkv, .mp4&#10;Virtual disks | #c49a00 | .vhdx, .qcow2"></textarea>
+            <small>Optional. One rule per line: <b>Category | #RRGGBB | .ext, .ext2</b>. Rules can recolor an existing category, add a category, or move listed extensions. Blank/comment lines are ignored.</small>
+          </label>
+          </fieldset>
+        </div>
+        <div class="settings-column">
+          <fieldset>
+          <legend>Tree share bars</legend>
+          <label class="check"><input id="settingTreeShareBandColorsEnabled" type="checkbox"> Color tree share bars by percentage band</label>
+          <small>Optional; off by default. Each fixed band is selected by the item's percentage of the complete scan using the active Logical/Allocated size basis.</small>
+          <div class="share-band-editor" aria-label="Tree share bar percentage bands">
+            <div class="share-band-editor-head"><span>Band</span><span>Color</span><span>Upper limit</span></div>
+            <label class="share-band-row"><span>1</span><input id="settingTreeShareColor1" type="color" value="#2ea043" aria-label="Tree share band 1 color"><span><input id="settingTreeShareMax1" type="number" min="0" max="100" step="0.1" value="5"> %</span></label>
+            <label class="share-band-row"><span>2</span><input id="settingTreeShareColor2" type="color" value="#3b82f6" aria-label="Tree share band 2 color"><span><input id="settingTreeShareMax2" type="number" min="0" max="100" step="0.1" value="75"> %</span></label>
+            <label class="share-band-row"><span>3</span><input id="settingTreeShareColor3" type="color" value="#d6a700" aria-label="Tree share band 3 color"><span><input id="settingTreeShareMax3" type="number" min="0" max="100" step="0.1" value="80"> %</span></label>
+            <label class="share-band-row"><span>4</span><input id="settingTreeShareColor4" type="color" value="#d73a49" aria-label="Tree share band 4 color"><span><input id="settingTreeShareMax4" type="number" min="100" max="100" step="1" value="100" title="The final band always covers through 100%"> %</span></label>
+          </div>
+          <small>Default bands: Green ≤ 5%; 5% &lt; Blue ≤ 75%; 75% &lt; Yellow ≤ 80%; 80% &lt; Red ≤ 100%. There are always exactly four bands; rows cannot be added or removed.</small>
+          </fieldset>
+          <fieldset>
+          <legend>Directory tree columns</legend>
+          <label class="check"><input id="settingColumnLogical" type="checkbox"> Logical size</label>
+          <label class="check"><input id="settingColumnAllocated" type="checkbox"> Allocated size</label>
+          <label class="check"><input id="settingColumnShare" type="checkbox"> Share</label>
+          <label class="check"><input id="settingColumnFiles" type="checkbox"> Files</label>
+          <label class="check"><input id="settingColumnDirectories" type="checkbox"> Directories</label>
+          <label class="check"><input id="settingColumnModified" type="checkbox"> Modified</label>
+          <button id="resetTreeColumnsButton" type="button" class="button compact">Reset columns</button>
+          <small>Name always remains visible. Hidden columns are removed from the virtualized row layout; horizontal scrolling is used when needed.</small>
+          </fieldset>
+          <fieldset>
+          <legend>Treemap</legend>
+          <label>Visualization<select id="settingTreemapVisualization"><option value="cushioned2d">Cushioned 2D</option><option value="extruded3d">Extruded 3D Blocks</option></select></label>
+          <label>Extrusion depth <span class="input-with-unit"><input id="settingTreemapExtrusionDepth" type="number" min="0" max="100" step="5"><span class="unit-label">%</span></span><small>Presentation only; the original 2D footprint remains authoritative.</small></label>
+          <label>Minimum interactive edge <span class="input-with-unit"><input id="settingTreemapMinPx" type="number" min="1" max="20" step="1"><span class="unit-label">px</span></span><small>Smaller tiles fade into a neutral low-detail field.</small></label>
+          <label>Maximum visible treemap nodes <input id="settingTreemapMaxItems" type="number" min="100" max="10000" step="100"><small>Directory groups are expanded largest-first; overflow is represented by bounded remainder tiles.</small></label>
+          <label>Hierarchy depth <select id="settingTreemapDepth"><option value="auto">Auto</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="unlimited">Unlimited / budget-limited</option></select></label>
+          <label class="check"><input id="settingTreemapLabels" type="checkbox"> Directory labels</label>
+          <label class="check"><input id="settingTreemapBorders" type="checkbox"> Directory borders</label>
+          <label>Border depth <input id="settingTreemapBorderDepth" type="number" min="1" max="8" step="1"></label>
+          <label class="check"><input id="settingTreemapCushion" type="checkbox"> 3D cushion shading for treemap tiles</label>
+          <label>Treemap colors<select id="settingTreemapColorMode"><option value="category">File categories</option><option value="extension">Individual extensions</option></select></label>
+          <label>3D cushion depth <span class="input-with-unit"><input id="settingTreemapCushionStrength" type="number" min="0" max="100" step="5"><span class="unit-label">%</span></span><small>Higher values increase the raised/embossed tile effect.</small></label>
+          <label class="check"><input id="settingAnimation" type="checkbox"> UI and scan animations</label>
+          </fieldset>
+        </div>
+      </div>
+      <footer class="dialog-actions settings-actions settings-footer"><button id="aboutButton" class="button">About</button><span></span><button id="saveSettingsButton" class="button primary">Save</button></footer>
+    </div>
+  </div>
+
+  <div id="aboutModal" class="overlay about-overlay hidden">
+    <div class="dialog about-dialog" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+      <div class="dialog-header"><h2 id="aboutTitle">About DiskMosaic Light</h2><button class="button icon-button modal-close" data-close="aboutModal">×</button></div>
+      <div class="about-content">
+        <img src="assets/icon.png" alt="DiskMosaic Light icon" width="88" height="88">
+        <div><h1>DiskMosaic Light</h1><p class="about-version">Version 1.0.0</p><p>Cross-platform disk usage analyzer and filesystem investigation tool for visualizing, comparing, and safely investigating local storage.</p></div>
+      </div>
+      <dl class="about-meta"><dt>License</dt><dd>GNU AGPL v3 only</dd><dt>License holder</dt><dd>Copyright (c) 2026 davoda1</dd><dt>Privacy</dt><dd>Offline · no telemetry · no accounts · no advertisements</dd></dl>
+      <div class="dialog-actions"><button id="closeAboutButton" class="button primary">Close</button></div>
+    </div>
+  </div>
+
+  <div id="commandPaletteModal" class="overlay command-palette-overlay hidden">
+    <div class="dialog command-palette-dialog" role="dialog" aria-modal="true" aria-labelledby="commandPaletteTitle">
+      <div class="dialog-header"><h2 id="commandPaletteTitle">Command Palette</h2><button class="button icon-button modal-close" data-close="commandPaletteModal">×</button></div>
+      <input id="commandPaletteInput" class="command-palette-input" autocomplete="off" placeholder="Type a command…">
+      <div id="commandPaletteList" class="command-palette-list"></div>
+    </div>
+  </div>
+
+  <div id="selectionMenu" class="context-menu selection-menu hidden">
+    <button data-selection-action="copy-paths">Copy paths</button>
+    <button data-selection-action="copy-names">Copy filenames</button>
+    <button data-selection-action="export">Export selected list…</button>
+    <button data-selection-action="reveal">Open containing folder</button>
+    <button data-selection-action="refresh">Refresh selected directories</button>
+    <button data-selection-action="hash">Calculate BLAKE3 hashes</button>
+    <hr>
+    <button data-selection-action="trash" class="danger-text">Move selected items to Trash…</button>
+    <button data-selection-action="clear">Clear selection</button>
+  </div>
+
+  <div id="errorsModal" class="overlay hidden">
+    <div class="dialog errors-dialog">
+      <div class="dialog-header"><h2>Scan errors</h2><button class="button icon-button modal-close" data-close="errorsModal">×</button></div>
+      <p id="errorsSummary" class="muted"></p>
+      <div class="error-table-head"><span>Path</span><span>Error</span></div>
+      <div id="errorsList" class="error-list"></div>
+    </div>
+  </div>
+
+  <div id="confirmModal" class="overlay hidden">
+    <div class="dialog confirm-dialog">
+      <h2 id="confirmTitle">Confirm</h2>
+      <p id="confirmText"></p>
+      <div class="dialog-actions">
+        <button id="confirmCancel" class="button">Cancel</button>
+        <button id="confirmAccept" class="button danger">Move to Trash</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="contextMenu" class="context-menu hidden">
+    <button data-action="open">Open</button>
+    <button data-action="reveal">Open containing folder</button>
+    <button data-action="copy">Copy path</button>
+    <button data-action="bookmark">Bookmark this location</button>
+    <button data-action="rescan">Rescan selected directory</button>
+    <hr>
+    <button data-action="trash" class="danger-text">Move to Trash…</button>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="treemap.js"></script>
+  <script src="i18n.js"></script>
+  <script src="file-types.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

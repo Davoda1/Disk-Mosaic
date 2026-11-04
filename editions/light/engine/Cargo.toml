@@ -1,0 +1,29 @@
+[package]
+name = "diskmosaic-engine"
+version = "1.0.0"
+edition = "2021"
+authors = ["davoda1"]
+description = "Filesystem scanning engine for DiskMosaic Light"
+homepage = "https://github.com/Davoda1/Disk-Mosaic"
+repository = "https://github.com/Davoda1/Disk-Mosaic"
+license = "AGPL-3.0-only"
+
+[dependencies]
+crossbeam-channel = "=0.5.15"
+fs2 = "=0.4.3"
+parking_lot = "=0.12.4"
+serde = { version = "=1.0.219", features = ["derive"] }
+serde_json = "=1.0.143"
+trash = "=5.2.3"
+blake3 = "=1.5.5"
+notify = "=7.0.0"
+rusqlite = { version = "=0.32.1", features = ["bundled"] }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "=0.61.0", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_Security"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"
+panic = "abort"

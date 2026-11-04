@@ -1,0 +1,19 @@
+# Local build products and sensitive runtime state
+/node_modules/
+__pycache__/
+*.pyc
+/dist/
+/.cache/
+.env
+.env.*
+!.env.example
+*.log
+*.dmscan
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.pem
+*.key
+.DS_Store
+Thumbs.db

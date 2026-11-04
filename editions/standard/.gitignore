@@ -1,0 +1,28 @@
+# Rust
+engine/target/
+
+# Electron / npm
+gui/node_modules/
+gui/resources/engine/diskmosaic-engine
+gui/resources/engine/diskmosaic-engine.exe
+
+# Project-local downloaded tooling and caches
+toolings/*
+!toolings/.gitkeep
+dependencies/*
+!dependencies/.gitkeep
+
+# Build/package output
+dist/*
+!dist/.gitkeep
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+
+# Obsolete development-only evidence
+docs/*-IMPROVEMENT-ANALYSIS.md
+docs/*-IMPLEMENTATION-NOTES.md
+docs/gui-validation/

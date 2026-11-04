@@ -1,0 +1,111 @@
+{
+  "name": "diskmosaic",
+  "version": "1.0.0",
+  "description": "DiskMosaic offline disk usage analyzer",
+  "main": "electron/main.cjs",
+  "author": "davoda1",
+  "homepage": "https://github.com/Davoda1/Disk-Mosaic",
+  "license": "AGPL-3.0-only",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test tests/*.test.cjs",
+    "build:renderer": "node electron/verify-renderer.cjs",
+    "build": "npm run build:renderer && npm test",
+    "dist:linux": "node ../scripts/package-app.cjs linux",
+    "dist:windows": "node ../scripts/package-app.cjs win32",
+    "test:layout": "node tests/layout-runtime.cjs"
+  },
+  "devDependencies": {
+    "@electron/asar": "4.3.1",
+    "@electron/packager": "20.3.0",
+    "electron": "45.2.2"
+  },
+  "build": {
+    "appId": "io.github.diskmosaic.standard",
+    "productName": "DiskMosaic",
+    "copyright": "Copyright © 2026 davoda1",
+    "asar": true,
+    "directories": {
+      "output": "../dist/package"
+    },
+    "files": [
+      "electron/**/*",
+      "renderer/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "resources/engine",
+        "to": "engine",
+        "filter": [
+          "diskmosaic-engine",
+          "diskmosaic-engine.exe"
+        ]
+      },
+      {
+        "from": "../LICENSE",
+        "to": "LICENSE"
+      },
+      {
+        "from": "../THIRD_PARTY_NOTICES.md",
+        "to": "THIRD_PARTY_NOTICES.md"
+      },
+      {
+        "from": "../LICENSING-AUDIT.md",
+        "to": "LICENSING-AUDIT.md"
+      },
+      {
+        "from": "../dependencies/rust-license-audit.md",
+        "to": "RUST_DEPENDENCIES.md"
+      },
+      {
+        "from": "../dependencies/rust-third-party-licenses.txt",
+        "to": "RUST_THIRD_PARTY_LICENSES.txt"
+      }
+    ],
+    "win": {
+      "target": [
+        "zip"
+      ],
+      "icon": "renderer/assets/icon.ico",
+      "artifactName": "DiskMosaic-${version}-Windows-x86_64.${ext}"
+    },
+    "linux": {
+      "target": [
+        "deb",
+        "tar.gz"
+      ],
+      "category": "Utility",
+      "executableName": "diskmosaic",
+      "icon": "renderer/assets/icon.png",
+      "artifactName": "DiskMosaic-${version}-Linux-x86_64.${ext}",
+      "synopsis": "Visual disk usage analyzer",
+      "description": "Fast local disk usage analysis with a Rust scanner and Electron interface.",
+      "syncDesktopName": true
+    },
+    "deb": {
+      "artifactName": "DiskMosaic-${version}-Linux-x86_64.${ext}",
+      "maintainer": "davoda1 <maintainers@example.invalid>",
+      "vendor": "davoda1",
+      "packageCategory": "utils",
+      "priority": "optional",
+      "compression": "xz"
+    }
+  },
+  "engines": {
+    "node": ">=26.13.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Davoda1/Disk-Mosaic.git",
+    "directory": "editions/standard"
+  },
+  "desktopName": "diskmosaic.desktop",
+  "overrides": {
+    "@electron/asar": {
+      "glob": "14.0.3",
+      "minimatch": "11.0.4"
+    }
+  }
+}

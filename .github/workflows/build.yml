@@ -1,0 +1,87 @@
+name: Build and validate
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  source:
+    name: Source archives and metadata
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26.13.0
+      - run: node scripts/verify-source.mjs
+      - name: Check dependency advisories
+        run: |
+          npm --prefix editions/standard/gui audit --audit-level=low
+          npm --prefix editions/light/gui audit --audit-level=low
+      - run: python3 scripts/package-source.py
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: source-archives
+          path: dist/source/*
+          archive: true
+          if-no-files-found: error
+
+  native:
+    name: ${{ matrix.edition }} / ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        edition: [standard, light]
+        os: [ubuntu-22.04, windows-2022]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    env:
+      CI: "true"
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26.13.0
+          cache: npm
+          cache-dependency-path: editions/${{ matrix.edition }}/gui/package-lock.json
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          toolchain: 1.99.1
+      - name: Verify repository metadata
+        run: node scripts/verify-source.mjs
+      - name: Build, test and package on Linux
+        if: runner.os == 'Linux'
+        working-directory: editions/${{ matrix.edition }}
+        run: ./scripts/run.sh
+      - name: Build, test and package on Windows
+        if: runner.os == 'Windows'
+        working-directory: editions/${{ matrix.edition }}
+        shell: pwsh
+        run: ./scripts/run.ps1
+      - name: Exercise the packaged engine protocol
+        run: python scripts/smoke-engine.py --edition ${{ matrix.edition }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: DiskMosaic-${{ matrix.edition }}-${{ runner.os }}-1.0.0
+          path: |
+            editions/${{ matrix.edition }}/dist/linux/*
+            editions/${{ matrix.edition }}/dist/windows/*
+          archive: true
+          if-no-files-found: error
+          retention-days: 30

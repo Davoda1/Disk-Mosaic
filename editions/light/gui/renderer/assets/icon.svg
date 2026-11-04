@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="DiskMosaic icon">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2f6feb"/>
+      <stop offset="1" stop-color="#6d5bd0"/>
+    </linearGradient>
+  </defs>
+  <rect x="24" y="24" width="464" height="464" rx="104" fill="#151a20"/>
+  <circle cx="256" cy="256" r="174" fill="none" stroke="url(#g)" stroke-width="34"/>
+  <circle cx="256" cy="256" r="42" fill="#f2f5f8"/>
+  <rect x="106" y="108" width="92" height="72" rx="15" fill="#30b8a6"/>
+  <rect x="210" y="108" width="112" height="72" rx="15" fill="#f0a43c"/>
+  <rect x="334" y="108" width="72" height="72" rx="15" fill="#d85d79"/>
+  <rect x="106" y="192" width="72" height="112" rx="15" fill="#6d5bd0"/>
+  <rect x="334" y="192" width="72" height="112" rx="15" fill="#2f6feb"/>
+  <rect x="106" y="316" width="112" height="88" rx="15" fill="#d85d79"/>
+  <rect x="230" y="332" width="72" height="72" rx="15" fill="#30b8a6"/>
+  <rect x="314" y="316" width="92" height="88" rx="15" fill="#f0a43c"/>
+</svg>
